@@ -1,5 +1,7 @@
-import logging
+import logging, time
+
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from datetime import datetime, date
 
 import settings
 
@@ -21,9 +23,9 @@ def main():
     dp.add_handler(CommandHandler("start", greet_user))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
-    logging.info("BOT start")
+    logging.info(f"BOT starting... Date: {time.ctime()}")
     mybot.start_polling()
     mybot.idle()
 
-if __main__ == "__main__":
+if __name__ == "__main__":
     main()
