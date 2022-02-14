@@ -5,3 +5,4 @@ settings.py
 env/
 .DS_store
 __pycache__/
+images/
