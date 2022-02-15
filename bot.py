@@ -1,7 +1,8 @@
 from glob import glob
-
+from emoji import emojize
 import logging, time
-
+import emoji
+import ephem
 from random import choice, randint
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -10,13 +11,12 @@ import settings
 logging.basicConfig(filename="bot.log", level=logging.INFO)
 
 def greet_user(update, context):
-    print("Вызван /start")
-    update.message.reply_text("Здравствуй, пользователь!")
-
+    context.user_data["emoji"] = get_smile(context.user_data)
+    update.message.reply_text(f"Здравствуй, пользователь {context.user_data['emoji']}!")
 def talk_to_me(update, context):
-    text = update.message.text
-    print(text)  
-    update.message.reply_text(text)
+    text = update.message.text  
+    context.user_data["emoji"] = get_smile(context.user_data)
+    update.message.reply_text(f"{text} {context.user_data['emoji']}")
 
 def discount_formula(user_price, user_discount):
     if user_discount >= 100:
@@ -26,6 +26,11 @@ def discount_formula(user_price, user_discount):
         message = f"Итоговая цена {final_price}"
     return message
 
+def get_smile(user_data):
+    if "emoji" not in user_data:
+        smile = choice(settings.USER_EMOJI)
+        return emojize(smile, use_aliases=True)  
+    return user_data["emoji"]
 
 def discount_price(update, context):
     if context.args:
@@ -66,7 +71,19 @@ def send_cat_picture(update, context):
     cat_pic_filename = choice(cat_photo_list)
     chat_id = update.effective_chat.id
     context.bot.send_photo(chat_id=chat_id, photo=open(cat_pic_filename, "rb"))
-    
+
+def planet_name(update, context):
+    time = update.message.date 
+    time = time.strftime("%m/%d/%Y")
+    planet = context.args[0]
+    planet = getattr(ephem, planet)(time)
+    star = ephem.constellation(planet)
+    stars = f"Сегодня находится в созвездии {star[1]}"
+    if len(star) == 2:
+      update.message.reply_text(stars)
+    else:
+      text = "Что то не так..."
+      update.message.reply_text(text)  
 
 
 def main():
@@ -77,6 +94,7 @@ def main():
     dp.add_handler(CommandHandler("dis", discount_price))
     dp.add_handler(CommandHandler("guess", guess_game))
     dp.add_handler(CommandHandler("cat", send_cat_picture))
+    dp.add_handler(CommandHandler("planet", planet_name))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
     logging.info(f"BOT starting... Date: {time.ctime()}")
