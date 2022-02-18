@@ -11,3 +11,4 @@ six==1.16.0
 tornado==6.1
 tzdata==2021.5
 tzlocal==4.1
+clarifai-grpc==7.11.0
