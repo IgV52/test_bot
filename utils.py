@@ -17,12 +17,6 @@ def discount_formula(user_price, user_discount):
         message = f"Итоговая цена {final_price}"
     return message
 
-def get_smile(user_data):
-    if "emoji" not in user_data:
-        smile = choice(settings.USER_EMOJI)
-        return emojize(smile, use_aliases=True)  
-    return user_data["emoji"]
-
 def play_random_number(user_num):
     bot_num = randint(user_num - 10, user_num + 10)
     if user_num > bot_num:

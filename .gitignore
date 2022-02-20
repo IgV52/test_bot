@@ -1,6 +1,6 @@
 settings.py
 *.log
-.vscode/
+.vscode
 .idea/
 env/
 .DS_store

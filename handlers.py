@@ -2,17 +2,18 @@ from glob import glob
 from random import choice
 import ephem
 import os
-from utils import get_smile, has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image
+from utils import has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image
+from db import db, get_or_create_user
+
 
 def greet_user(update, context):
-    context.user_data["emoji"] = get_smile(context.user_data)
-    update.message.reply_text(f"Здравствуй, пользователь {context.user_data['emoji']}!",
+    user = get_or_create_user(db, update.effective_user, update.message.chat.id)
+    update.message.reply_text(f'Здравствуй, пользователь {user["emoji"]}!',
     reply_markup=main_keyboard())
 
 def talk_to_me(update, context):
     text = update.message.text  
-    context.user_data["emoji"] = get_smile(context.user_data)
-    update.message.reply_text(f"{text} {context.user_data['emoji']}",
+    update.message.reply_text(f"{text}",
     reply_markup=main_keyboard())
 
 def guess_game(update, context):
@@ -33,9 +34,8 @@ def send_cat_picture(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=open(cat_pic_filename, "rb"), reply_markup=main_keyboard())
 
 def user_coordinats(update, context):
-    context.user_data["emoji"] = get_smile(context.user_data)
     coords = update.message.location
-    update.message.reply_text(f"Ваши координаты {coords} {context.user_data['emoji']}!",
+    update.message.reply_text(f"Ваши координаты {coords}!",
     reply_makeup=main_keyboard())
 
 def discount_price(update, context):
@@ -54,14 +54,17 @@ def planet_name(update, context):
     time = update.message.date 
     time = time.strftime("%m/%d/%Y")
     planet = context.args[0]
-    planet = getattr(ephem, planet)(time)
-    star = ephem.constellation(planet)
-    stars = f"Сегодня находится в созвездии {star[1]}"
-    if len(star) == 2:
-      update.message.reply_text(stars, reply_markup=main_keyboard())
-    else:
-      text = "Что то не так..."
-      update.message.reply_text(text)  
+    try:
+        planet = getattr(ephem, planet)(time)
+        star = ephem.constellation(planet)
+        stars = f"Сегодня находится в созвездии {star[1]}"
+        if len(star) == 2:
+            update.message.reply_text(stars, reply_markup=main_keyboard())
+        else:
+            text = "Что то не так..."
+            update.message.reply_text(text)  
+    except AttributeError as err:
+        return update.message.reply_text(f"Ошибка {err}")
 
 def chek_user_photo(update, context):
     update.message.reply_text('Обрабатываем фото')
