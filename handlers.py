@@ -1,8 +1,9 @@
+from email import message
 from glob import glob
 from random import choice
 import ephem
 import os
-from utils import has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image
+from utils import has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image, word_chek
 from db import db, get_or_create_user
 
 
@@ -80,3 +81,9 @@ def chek_user_photo(update, context):
     else:
         os.remove(file_name)
         update.message.reply_text('Котик не обнаружен!')
+
+def word_count(update, context):
+    word = (update.message.text).split()
+    print(word)
+    message = word_chek(word)
+    return update.message.reply_text(message)

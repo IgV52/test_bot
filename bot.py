@@ -1,6 +1,6 @@
 
 from anketa import anketa_start, anketa_name, anketa_rating, anketa_skip, anketa_comment, anketa_dontknow
-from handlers import greet_user, guess_game, planet_name, send_cat_picture, discount_price, talk_to_me, user_coordinats, chek_user_photo
+from handlers import greet_user, guess_game, planet_name, send_cat_picture, discount_price, talk_to_me, user_coordinats, chek_user_photo, word_count
 import logging, time
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 
@@ -34,6 +34,7 @@ def main():
     dp.add_handler(CommandHandler("guess", guess_game))
     dp.add_handler(CommandHandler("cat", send_cat_picture))
     dp.add_handler(CommandHandler("planet", planet_name))
+    dp.add_handler(CommandHandler("wordcount", word_count))
     dp.add_handler(MessageHandler(Filters.regex('^(Прислать котика)$'), send_cat_picture))
     dp.add_handler(MessageHandler(Filters.photo, chek_user_photo))
     dp.add_handler(MessageHandler(Filters.location, user_coordinats))

@@ -58,3 +58,11 @@ def check_response_for_object(response, object_name):
     else:
         print(f'Ошибка распознавания картинки {response.outputs[0].status.details}')
     return False
+
+def word_chek(text):
+    counter = 0
+    for word in text:
+        if word.isalpha():    
+            counter += 1
+    message = f'Количество слов равно {counter}'
+    return message
