@@ -67,6 +67,11 @@ def planet_name(update, context):
     except AttributeError as err:
         return update.message.reply_text(f"Ошибка {err}")
 
+def next_full_moon(update, context):
+    moon = context.args[0]
+    moon_day = ephem.next_full_moon(moon)
+    return update.message.reply_text(moon_day)
+
 def chek_user_photo(update, context):
     update.message.reply_text('Обрабатываем фото')
     os.makedirs('donwloads', exist_ok=True)
@@ -83,7 +88,6 @@ def chek_user_photo(update, context):
         update.message.reply_text('Котик не обнаружен!')
 
 def word_count(update, context):
-    word = (update.message.text).split()
-    print(word)
+    word = context.args
     message = word_chek(word)
     return update.message.reply_text(message)
