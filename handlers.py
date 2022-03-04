@@ -3,7 +3,7 @@ from glob import glob
 from random import choice
 import ephem
 import os
-from utils import has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image, word_chek
+from utils import has_object_on_image, play_random_number, main_keyboard, discount_formula, has_object_on_image, word_chek, check_city, search_city
 from db import db, get_or_create_user
 
 
@@ -91,3 +91,13 @@ def word_count(update, context):
     word = context.args
     message = word_chek(word)
     return update.message.reply_text(message)
+
+def game_city(update, context):
+    city = str(context.args)
+    proverka = check_city(city)
+    if proverka == 1:
+        user = update.message.chat.id
+        message = search_city(user, city)
+        update.message.reply_text(message)
+    else:
+        update.message.reply_text("Вы ввели не город, я знаю только города России")

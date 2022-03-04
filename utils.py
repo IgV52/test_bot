@@ -6,7 +6,7 @@ import settings
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import service_pb2_grpc, service_pb2, resources_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
-
+import csv
 
 
 def discount_formula(user_price, user_discount):
@@ -66,3 +66,39 @@ def word_chek(text):
             counter += 1
     message = f'Количество слов равно {counter}'
     return message
+
+def search_city(user, city):
+    with open('city_game.csv', 'r+', encoding='utf_8') as city_game, open("city.txt", "r", encoding="utf_8") as city_base:
+        fields = ["user_id", "user_city", "bot_city"]
+        city = (city.lower()).replace('\n', "")
+        for line in city_base:
+            line = ((line.lower()).strip()).replace('\n', "")
+            if line in city:
+                variant_bot = city[-3]
+                city_base.seek(0, 0)
+                for line_bot in city_base:
+                    line_bot = line_bot.replace('\n', "")
+                    if line_bot[0].lower() == variant_bot and line_bot.lower() != city:
+                        for line_bot_check in city_game:
+                            if line_bot_check not in line_bot:
+                                bot_city = line_bot.replace('\n', "") 
+                                writer = csv.DictWriter(city_game, fieldnames=fields)
+                                writer.writeheader()
+                                writer.writerow({'user_id' : user, 'user_city' : city, 'bot_city' : bot_city})
+                                message = bot_city
+            else:
+                message = 'Я называл этот город'
+        return message
+
+def check_city(city_check):
+    city_check = (city_check.lower()).strip()
+    city_check = city_check[2:-2]
+    with open('city.txt', 'r', encoding='utf_8') as c_check:
+        for line in c_check:
+            line = ((line.lower()).strip()).replace('\n', "")
+            if line == city_check:
+                proverka = 1
+                break
+            else:
+                proverka = 0
+        return proverka

@@ -7,3 +7,6 @@ env/
 __pycache__/
 images/
 donwloads/
+oop.py
+bot_develop.py
+city_game.csv
