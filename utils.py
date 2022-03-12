@@ -1,4 +1,5 @@
 
+from email import message
 from emoji import emojize
 from random import choice, randint
 from telegram import ReplyKeyboardMarkup, KeyboardButton
@@ -67,38 +68,74 @@ def word_chek(text):
     message = f'Количество слов равно {counter}'
     return message
 
+def check_symbol(city):
+    wrong_char = ("Ъ", "ь", "ы", "й")
+    for char in city[::-1]:
+        if char in wrong_char:
+            continue
+        else:
+            break
+    else:
+        raise RuntimeError
+    return char
+
 def search_city(user, city):
-    with open('city_game.csv', 'r+', encoding='utf_8') as city_game, open("city.txt", "r", encoding="utf_8") as city_base:
+    city = format_city(city)
+    check = check_base_game(user, city)
+    if check:
+        cities = open_base_city()
+        for line_user in cities:
+            line_user = format_city(line_user)
+            if line_user in city:
+                variant_bot = city
+                variant_bot = check_symbol(variant_bot)
+                for line_bot in cities:
+                    line_bot = format_city(line_bot)
+                    if line_bot[0] == variant_bot:
+                        message = line_bot
+                        create_base_use_city(user, city, message)
+                        break  
+    else:
+        message = 'Этот город был'
+    return message
+
+def check_base_game(user, city):
+    with open('city_game.csv', 'r', encoding='utf-8') as f:
+        cities = {city for city in f.readlines() if city.strip()}
+        good = True
+        for line in cities:
+            lines = line.replace('\n', '').split(',')
+            if lines[0] == str(user) and lines[1] == city:
+                good = False
+                break
+            if lines[0] == str(user) and lines[2] == city:
+                good = False
+                break
+        return good
+
+def format_city(city):
+    return city.strip().lower().replace('ё','е').replace('\n',"")
+
+def open_base_city():
+    with open("city.txt", "r", encoding='utf-8') as f:
+        cities = {format_city(city) for city in f.readlines() if city.strip()}
+        return cities
+
+def create_base_use_city(user, city, bot_city):
+    with open("city_game.csv", "r+", encoding='utf-8') as f:
         fields = ["user_id", "user_city", "bot_city"]
-        city = (city.lower()).replace('\n', "")
-        for line in city_base:
-            line = ((line.lower()).strip()).replace('\n', "")
-            if line in city:
-                variant_bot = city[-3]
-                city_base.seek(0, 0)
-                for line_bot in city_base:
-                    line_bot = line_bot.replace('\n', "")
-                    if line_bot[0].lower() == variant_bot and line_bot.lower() != city:
-                        for line_bot_check in city_game:
-                            if line_bot_check not in line_bot:
-                                bot_city = line_bot.replace('\n', "") 
-                                writer = csv.DictWriter(city_game, fieldnames=fields)
-                                writer.writeheader()
-                                writer.writerow({'user_id' : user, 'user_city' : city, 'bot_city' : bot_city})
-                                message = bot_city
-            else:
-                message = 'Я называл этот город'
-        return message
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writerow({'user_id' : user, 'user_city' : city, 'bot_city' : bot_city})
+        
 
 def check_city(city_check):
-    city_check = (city_check.lower()).strip()
-    city_check = city_check[2:-2]
-    with open('city.txt', 'r', encoding='utf_8') as c_check:
-        for line in c_check:
-            line = ((line.lower()).strip()).replace('\n', "")
-            if line == city_check:
-                proverka = 1
-                break
-            else:
-                proverka = 0
-        return proverka
+    city_check = city_check.lower()
+    cities = open_base_city()
+    for city in cities:
+        if city == city_check:
+            proverka = 1
+            break
+        else:
+            proverka = 0
+    return proverka
+
