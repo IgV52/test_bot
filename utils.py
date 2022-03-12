@@ -92,7 +92,7 @@ def search_city(user, city):
                 for line_bot in cities:
                     line_bot = format_city(line_bot)
                     if line_bot[0] == variant_bot:
-                        message = line_bot
+                        message = line_bot.capitalize()
                         create_base_use_city(user, city, message)
                         break  
     else:
