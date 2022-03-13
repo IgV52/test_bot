@@ -93,9 +93,9 @@ def word_count(update, context):
     return update.message.reply_text(message)
 
 def game_city(update, context):
-    city = str(context.args)
+    city = context.args
+    city = ' '.join(city)
     city = city.strip()
-    city = city[2:-2]
     proverka = check_city(city)
     if proverka == 1:
         user = str(update.message.chat.id)

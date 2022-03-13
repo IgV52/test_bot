@@ -1,5 +1,3 @@
-
-from email import message
 from emoji import emojize
 from random import choice, randint
 from telegram import ReplyKeyboardMarkup, KeyboardButton
@@ -79,36 +77,65 @@ def check_symbol(city):
         raise RuntimeError
     return char
 
-def search_city(user, city):
-    city = format_city(city)
-    check = check_base_game(user, city)
-    if check:
-        cities = open_base_city()
-        for line_user in cities:
-            line_user = format_city(line_user)
-            if line_user in city:
-                variant_bot = city
-                variant_bot = check_symbol(variant_bot)
-                for line_bot in cities:
-                    line_bot = format_city(line_bot)
-                    if line_bot[0] == variant_bot:
-                        message = line_bot.capitalize()
-                        create_base_use_city(user, city, message)
-                        break  
+def check_user_char(arg1,user, city): 
+    message = []
+    message.append(arg1)
+    message.append(user)
+    message.append(city)
+    check_char = open_game_city()
+    check_content = len(list(check_char))
+    if check_content >= 1:
+        for user_line in check_char:
+            user_search = user_line.split(',')
+            if user in user_search:
+                for line in check_char:
+                    line = line.split(',')
+                    if user in line:
+                        user_city = city
+                        last_city = check_symbol(line[2])
+                if last_city != format_city(user_city[0]):
+                    message[0] = False
+                    message[2] = last_city.upper()
     else:
-        message = 'Этот город был'
+        message
     return message
 
-def check_base_game(user, city):
+def search_city(user, city):
+    arg1 = True
+    check_char = check_user_char(arg1,user, city)
+    city = format_city(city)
+    check = check_base_game(user, city, arg1)
+    if check_char[0]:    
+        if check:
+            cities = open_base_city()
+            for line_user in cities:
+                line_user = format_city(line_user)
+                if line_user in city:
+                    variant_bot = city
+                    variant_bot = check_symbol(variant_bot)
+                    for line_bot in cities:
+                        line_bot = format_city(line_bot)
+                        if line_bot[0] == variant_bot and check_base_game(user, city, line_bot):
+                            message = line_bot
+                            create_base_use_city(user, city, message)
+                            break  
+        else:
+            message = 'Этот город был'
+    else:
+        message = f'Вашь город должен начинаться на {check_char[2]}'
+    return message.capitalize()
+
+def check_base_game(user, city, arg1):
+    line_bot = arg1
     with open('city_game.csv', 'r', encoding='utf-8') as f:
-        cities = {city for city in f.readlines() if city.strip()}
+        cities = [city for city in f.readlines() if city.strip()]
         good = True
         for line in cities:
             lines = line.replace('\n', '').split(',')
             if lines[0] == str(user) and lines[1] == city:
                 good = False
                 break
-            if lines[0] == str(user) and lines[2] == city:
+            if lines[0] == str(user) and lines[2] == line_bot:
                 good = False
                 break
         return good
@@ -121,16 +148,23 @@ def open_base_city():
         cities = {format_city(city) for city in f.readlines() if city.strip()}
         return cities
 
+def open_game_city():
+    with open("city_game.csv", "r", encoding='utf-8') as f:
+        cities = [format_city(city) for city in f.readlines() if city.strip()]
+        return cities
+
 def create_base_use_city(user, city, bot_city):
     with open("city_game.csv", "r+", encoding='utf-8') as f:
         fields = ["user_id", "user_city", "bot_city"]
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writerow({'user_id' : user, 'user_city' : city, 'bot_city' : bot_city})
-        
+        cities = [format_city(city) for city in f.readlines() if city.strip()]
+        return cities
 
 def check_city(city_check):
     city_check = city_check.lower()
     cities = open_base_city()
+    print(city_check)
     for city in cities:
         if city == city_check:
             proverka = 1
@@ -138,4 +172,3 @@ def check_city(city_check):
         else:
             proverka = 0
     return proverka
-
