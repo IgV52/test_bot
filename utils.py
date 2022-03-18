@@ -95,7 +95,7 @@ def check_user_char(arg1,user, city):
                         last_city = check_symbol(line[2])
                 if last_city != format_city(user_city[0]):
                     message[0] = False
-                    message[2] = last_city.upper()
+                    message[2] = last_city
     else:
         message
     return message
@@ -116,14 +116,15 @@ def search_city(user, city):
                     for line_bot in cities:
                         line_bot = format_city(line_bot)
                         if line_bot[0] == variant_bot and check_base_game(user, city, line_bot):
-                            message = line_bot
+                            message = line_bot.capitalize()
                             create_base_use_city(user, city, message)
                             break  
         else:
             message = 'Этот город был'
     else:
-        message = f'Вашь город должен начинаться на {check_char[2]}'
-    return message.capitalize()
+        check_char = (str(check_char[2])).upper()
+        message = f'Ваш город должен начинаться на {check_char}'
+    return message
 
 def check_base_game(user, city, arg1):
     line_bot = arg1
