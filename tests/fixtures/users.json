@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "6249a9b7ead58cf3cb64a05e"
+  },
+  "user_id": 1385186381,
+  "first_name": "Ivan",
+  "last_name": "Grubov",
+  "username": "IvanGrubov",
+  "chat_id": 1385186381,
+  "emoji": "😺",
+  "subscribed": true
+}]

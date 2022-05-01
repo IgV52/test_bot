@@ -1,0 +1,134 @@
+[{
+  "_id": {
+    "$oid": "6256b8c216d9627e08162e2a"
+  },
+  "image_name": "images\\cat_3.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "user_vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "user_vote": -1
+    },
+    {
+      "user_id": 1385186381,
+      "user_vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256bc58424cbd59133c796b"
+  },
+  "image_name": "images\\cat_5.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    },
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256bca9ff8903841353d849"
+  },
+  "image_name": "images\\cat_AgA.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256be3ce054e4a2c6e7336b"
+  },
+  "image_name": "images\\cat_A2.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256c0139cba5275ca2191ea"
+  },
+  "image_name": "images\\cat_6.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256c406288061325c6353ea"
+  },
+  "image_name": "images\\cat_2.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "6256c445b5cb6354bfcde88c"
+  },
+  "image_name": "images\\cat_4.jpg",
+  "votes": [
+    {
+      "user_id": 1385186381,
+      "vote": 1
+    }
+  ]
+}]

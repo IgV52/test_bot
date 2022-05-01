@@ -1,18 +1,47 @@
-
 from anketa import anketa_start, anketa_name, anketa_rating, anketa_skip, anketa_comment, anketa_dontknow
-from handlers import greet_user, guess_game, planet_name, send_cat_picture, discount_price, talk_to_me, user_coordinats, chek_user_photo, word_count, next_full_moon, game_city
-import logging, time
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+from handlers import (greet_user, guess_game, planet_name, send_cat_picture, discount_price, talk_to_me, unsubscribe, 
+                        user_coordinats, chek_user_photo, word_count, next_full_moon, game_city, subscribe, set_alarm, cat_picture_rating)
+import logging
+import pytz
+from datetime import time, datetime
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
+from telegram.ext import messagequeue as mq
+from telegram.bot import Bot
+from telegram.utils.request import Request
+from jobs import send_updates
+
 
 
 import settings
 
 logging.basicConfig(filename="bot.log", level=logging.INFO)
 
+class MQBot(Bot):
+    def __init__(self, *args, is_queued_def=True, msg_queue=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._is_messages_queued_default = is_queued_def
+        self._msg_queue = msg_queue or mq.MessageQueue()
+
+    def __del__(self):
+        try:
+            self._msg_queue.stop()
+        except:
+            pass
+
+    @mq.queuedmessage
+    def send_message(self, *args, **kwargs):
+        return super().send_message(*args, **kwargs)
+
 def main():
-    mybot = Updater(settings.API_KEY, use_context = True)
+    request = Request(con_pool_size=8)
+    bot = MQBot(settings.API_KEY, request=request)
+    mybot = Updater(bot=bot, use_context = True)
 
     dp = mybot.dispatcher
+    jq = mybot.job_queue
+    target_days = range(3)
+    target_time = time(12,0, tzinfo=pytz.timezone('Europe/Moscow'))
+    jq.run_daily(send_updates, target_time, target_days)
 
     anketa = ConversationHandler(
         entry_points=[
@@ -29,6 +58,10 @@ def main():
     )
     
     dp.add_handler(anketa)
+    dp.add_handler(CallbackQueryHandler(cat_picture_rating, pattern="^(rating|)"))
+    dp.add_handler(CommandHandler('alarm', set_alarm))
+    dp.add_handler(CommandHandler('sub', subscribe))
+    dp.add_handler(CommandHandler('unsub', unsubscribe))
     dp.add_handler(CommandHandler("start", greet_user))
     dp.add_handler(CommandHandler("dis", discount_price))
     dp.add_handler(CommandHandler("guess", guess_game))
@@ -42,7 +75,7 @@ def main():
     dp.add_handler(MessageHandler(Filters.location, user_coordinats))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
-    logging.info(f"BOT starting... Date: {time.ctime()}")
+    logging.info(f"BOT starting... Date: {datetime.now()}")
     mybot.start_polling()
     mybot.idle()
 

@@ -1,12 +1,15 @@
 from emoji import emojize
 from random import choice, randint
-from telegram import ReplyKeyboardMarkup, KeyboardButton
+from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import settings
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import service_pb2_grpc, service_pb2, resources_pb2
 from clarifai_grpc.grpc.api.status import status_code_pb2
 import csv
 
+def get_bot_number(user_num):
+    bot_num = randint(user_num - 10, user_num + 10)
+    return bot_num
 
 def discount_formula(user_price, user_discount):
     if user_discount >= 100:
@@ -16,8 +19,7 @@ def discount_formula(user_price, user_discount):
         message = f"Итоговая цена {final_price}"
     return message
 
-def play_random_number(user_num):
-    bot_num = randint(user_num - 10, user_num + 10)
+def play_random_number(user_num, bot_num):
     if user_num > bot_num:
         message = f"Ваше число {user_num}, мое {bot_num}, вы выиграли!"
     elif user_num == bot_num:
@@ -78,10 +80,7 @@ def check_symbol(city):
     return char
 
 def check_user_char(arg1,user, city): 
-    message = []
-    message.append(arg1)
-    message.append(user)
-    message.append(city)
+    message = [arg1, user, city]
     check_char = open_game_city()
     check_content = len(list(check_char))
     if check_content >= 1:
@@ -173,3 +172,13 @@ def check_city(city_check):
         else:
             proverka = 0
     return proverka
+
+def cat_rating_inline_keyboard(image_name):
+    callback_text = f'rating|{image_name}|'
+    keyboard = [
+        [
+            InlineKeyboardButton('+1', callback_data=callback_text + '1'),
+            InlineKeyboardButton('-1', callback_data=callback_text + '-1'),
+        ]
+    ]
+    return InlineKeyboardMarkup(keyboard)
