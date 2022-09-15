@@ -10,3 +10,5 @@ donwloads/
 oop.py
 bot_develop.py
 city_game.csv
+.pytest_cache
+tests_gamecity.py

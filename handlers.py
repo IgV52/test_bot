@@ -4,7 +4,7 @@ from random import choice
 import ephem
 import os
 from utils import (has_object_on_image, play_random_number, main_keyboard, discount_formula, 
-                has_object_on_image, word_chek, check_city, search_city, cat_rating_inline_keyboard, get_bot_number)
+                has_object_on_image, cat_rating_inline_keyboard, get_bot_number)
 from db import (db, get_or_create_user, subscribe_user, 
                 unsubscribe_user, save_cat_image_vote, user_voted, get_image_rating)
 
@@ -107,18 +107,6 @@ def word_count(update, context):
     word = context.args
     message = word_chek(word)
     return update.message.reply_text(message)
-
-def game_city(update, context):
-    city = context.args
-    city = ' '.join(city)
-    city = city.strip()
-    proverka = check_city(city)
-    if proverka == 1:
-        user = str(update.message.chat.id)
-        message = search_city(user, city)
-        update.message.reply_text(message)
-    else:
-        update.message.reply_text("Вы ввели не город, я знаю только города России")
 
 def subscribe(update, context):
     user = get_or_create_user(db, update.effective_user, update.message.chat.id)
